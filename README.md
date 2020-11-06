@@ -1,6 +1,6 @@
 # take_product
 
-A new Flutter project.
+This project alow you to get a pictures from a .csv file, this picture will automaticaly retrive a background
 
 ## Getting Started
 
