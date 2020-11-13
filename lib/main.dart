@@ -39,7 +39,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  OurImageProvider ourImage;
+  File ourImage;
   final picker = ImagePicker();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -58,26 +58,25 @@ class _MyHomePageState extends State<MyHomePage> {
     final pickedFile = await picker.getImage(source: ImageSource.camera, imageQuality: 50);
     
     setState(() {
-      ourImage = OurImageProvider(imageProvider: FileImage(File(pickedFile.path)));
+      ourImage = File(pickedFile.path);
     });
   }
 
   Future getCsv() async {
     try{
-final path = await FlutterDocumentPicker.openDocument();
+      
+      final path = await FlutterDocumentPicker.openDocument();
 
-                if(path != null) {
-                  File _file = File(path);
+      if(path != null) {
+            File _file = File(path);
 
-                  String content = await _file.readAsString();
-                  rowsAsListOfValues = const CsvToListConverter().convert(content);
-                  init = rowsAsListOfValues.length - 1;
-                  setState(() {
-                    
-                  });
-                } else {
+            String content = await _file.readAsString();
+            rowsAsListOfValues = const CsvToListConverter().convert(content);
+            init = rowsAsListOfValues.length - 1;
+            setState(() {});
+          } else {
                   // User canceled the picker
-                }
+          }
     }
     catch(e) { 
       _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Impossible de recuperer le contenu du csv.")));    
@@ -101,7 +100,7 @@ final path = await FlutterDocumentPicker.openDocument();
       try{
         Directory appDocDir = await getApplicationDocumentsDirectory();
         String appDocPath = appDocDir.path;
-        var b = Uint8List.fromList(ourImage.bytes);
+        var b = await ourImage.readAsBytes();
         bool c = await _imageSaver.saveImage(imageBytes: b, imageName:  selectrdProduct[0].toString() + ".png");
         if(c){
           _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text("Success"),backgroundColor: Colors.green,));  
@@ -173,7 +172,7 @@ final path = await FlutterDocumentPicker.openDocument();
                         padding: const EdgeInsets.all(10.0),
                         child: ourImage == null
                   ? Text('No image selected.')
-                  : Image(image: ourImage, height: 300,),
+                  : Image.file(ourImage, height: 300,)
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),

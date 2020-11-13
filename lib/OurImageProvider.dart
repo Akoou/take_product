@@ -58,9 +58,9 @@ final ImageProvider imageProvider;
     final pixels = image.getBytes();
     final lenth = pixels.lengthInBytes;
 
-    int r = pixels[0];
-    int g = pixels[1];
-    int b = pixels[2];
+    int r = (pixels[0] + pixels[8]) ~/ 2;
+    int g = (pixels[1] + pixels[9]) ~/ 2;
+    int b = (pixels[2] + pixels[10]) ~/ 2;
 
     int x = image.width.toInt();
     int y = image.height.toInt();
@@ -68,11 +68,7 @@ final ImageProvider imageProvider;
     int h = 100;
 
     for(int i = 0; i < lenth; i+=4){
-      if((pixels[i] - r).abs() < 50 && (pixels[i+1] - g).abs() < 50 && (pixels[i+2] - b).abs() < 50){
-        // pixels[i+0]= 0;
-        // pixels[i+1]= 0;
-        // pixels[i+2]= 255;
-        // pixels[i+3]= 0;
+      if((pixels[i] - (r-20)).abs() < 50 && (pixels[i+1] - (g-20)).abs() < 50 && (pixels[i+2] - (b-20)).abs() < 50){
         image.setPixelRgba(((i~/4)%image.width), ((i/4)~/image.width), 255,0,0,0);
       }
       else{
@@ -90,9 +86,11 @@ final ImageProvider imageProvider;
 
       }
     }
+
     image.channels = Img.Channels.rgba;
 
     var thumbnail = Img.copyCrop(image, x,y,w - x,h-y);
+
     this.bytes = Img.encodePng(thumbnail);
     return this.bytes;
   }
